@@ -4,8 +4,12 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Twin-2K-500 — Persona Browser</title>
+
   <script src="https://cdn.tailwindcss.com"></script>
-  <style> pre { white-space: pre-wrap; word-break: break-word; } </style>
+  <style> 
+    /* Ensures text wraps inside the boxes so it doesn't scroll horizontally */
+    pre { white-space: pre-wrap; word-break: break-word; } 
+  </style>
 </head>
 <body class="bg-gray-50 text-gray-900 font-sans antialiased">
   <div class="max-w-3xl mx-auto p-4 sm:p-6">
@@ -18,16 +22,19 @@
     </header>
 
     <section class="mb-6 bg-white p-4 rounded-lg border shadow-sm">
-      <p class="text-sm text-gray-700">
+      <p class="text-sm text-gray-700 leading-relaxed">
+        This tool provides an interface for the <strong>Twin-2K-500</strong> dataset, developed by 
+        <strong>Toubia, Gui, Peng, and John (2025)</strong>.
+        <br><br>
         <strong>Instructions:</strong>
         1. Click "Random Persona" or enter a specific ID.
         2. Modify the scenario or question below.
-        3. Click "Generate Prompt" and then "Copy".
+        3. Click "Generate Prompt" and then "Copy" to paste it into ChatGPT/Claude/Gemini.
       </p>
     </section>
 
     <section class="space-y-4 mb-6">
-      <div id="countBadge" class="text-xs font-mono text-gray-500 text-right">Loading database...</div>
+      <div id="countBadge" class="text-xs font-mono text-gray-500 text-right">Connecting to database...</div>
       
       <div class="flex flex-col sm:flex-row gap-2">
         <button id="randomBtn" class="flex-1 px-4 py-2 rounded bg-sky-700 text-white font-medium hover:bg-sky-800 transition-colors shadow-sm">
@@ -35,7 +42,9 @@
         </button>
         <div class="flex gap-2">
             <input id="idInput" type="number" placeholder="PID #" class="w-24 px-3 py-2 border rounded text-center" />
-            <button id="getBtn" class="px-4 py-2 rounded border border-gray-300 bg-white hover:bg-gray-50 font-medium shadow-sm">Get</button>
+            <button id="getBtn" class="px-4 py-2 rounded border border-gray-300 bg-white hover:bg-gray-50 font-medium shadow-sm">
+            Get
+            </button>
         </div>
       </div>
 
@@ -50,25 +59,31 @@
     <section class="space-y-4 mb-6">
       <div>
         <label class="block text-sm font-medium text-gray-700 mb-1">System Instruction</label>
-        <textarea id="systemInstr" class="w-full p-3 border rounded shadow-sm text-sm" rows="3">You are an AI assistant. Answer the upcoming question exactly as if you are the person described in the Persona Profile. Stay consistent with past responses.</textarea>
+        <textarea id="systemInstr" class="w-full p-3 border rounded shadow-sm text-sm focus:ring-2 focus:ring-sky-500 focus:outline-none" rows="3">You are an AI assistant. Answer the upcoming question exactly as if you are the person described in the Persona Profile. Stay consistent with past responses.</textarea>
       </div>
+
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
             <label class="block text-sm font-medium text-gray-700 mb-1">Scenario / Treatment</label>
-            <textarea id="treatmentInstr" class="w-full p-3 border rounded shadow-sm text-sm" rows="3">Imagine you received an unexpected $500 windfall.</textarea>
+            <textarea id="treatmentInstr" class="w-full p-3 border rounded shadow-sm text-sm focus:ring-2 focus:ring-sky-500 focus:outline-none" rows="3">Imagine you received an unexpected $500 windfall.</textarea>
         </div>
         <div>
             <label class="block text-sm font-medium text-gray-700 mb-1">Outcome / Question</label>
-            <textarea id="outcomeInstr" class="w-full p-3 border rounded shadow-sm text-sm" rows="3">How much of this money would you save versus spend? Provide a numeric percentage (0–100) for saving.</textarea>
+            <textarea id="outcomeInstr" class="w-full p-3 border rounded shadow-sm text-sm focus:ring-2 focus:ring-sky-500 focus:outline-none" rows="3">How much of this money would you save versus spend? Provide a numeric percentage (0–100) for saving.</textarea>
         </div>
       </div>
     </section>
 
     <section class="space-y-3 mb-8">
       <div class="flex gap-2">
-        <button id="genBtn" class="flex-1 px-4 py-3 rounded bg-emerald-600 text-white font-bold hover:bg-emerald-700 shadow-md transition-all">Generate Prompt</button>
-        <button id="copyBtn" class="px-6 py-3 rounded border border-gray-300 bg-white hover:bg-gray-50 font-medium shadow-sm">Copy</button>
+        <button id="genBtn" class="flex-1 px-4 py-3 rounded bg-emerald-600 text-white font-bold hover:bg-emerald-700 shadow-md transition-all">
+            Generate Prompt
+        </button>
+        <button id="copyBtn" class="px-6 py-3 rounded border border-gray-300 bg-white hover:bg-gray-50 font-medium shadow-sm">
+            Copy
+        </button>
       </div>
+
       <div>
         <label class="block text-xs uppercase font-bold text-gray-500 mb-1">Final Prompt Preview</label>
         <div class="relative">
@@ -79,26 +94,37 @@
       <button id="clearBtn" class="text-xs text-gray-400 hover:text-red-500 underline">Clear Output</button>
     </section>
 
-<footer class="text-xs text-center text-gray-500 border-t pt-6 pb-8 mt-8">
-  <div class="font-semibold text-gray-700 mb-2">Primary Source Attribution</div>
-  
-  <p class="mb-3 leading-relaxed">
-    Toubia, O., Gui, L., Peng, L., & John, L. K. (2025). <br>
-    <em>Twin-2K-500 dataset & digital-twin modeling.</em> Marketing Science. <br>
-    <a href="https://doi.org/10.1287/mksc.2025.0262" class="text-sky-700 hover:underline" target="_blank">https://doi.org/10.1287/mksc.2025.0262</a>
-  </p>
+    <footer class="text-xs text-center text-gray-500 border-t pt-6 pb-8 mt-8">
+      <div class="font-semibold text-gray-700 mb-2">Primary Source Attribution</div>
+      
+      <p class="mb-3 leading-relaxed">
+        Toubia, O., Gui, L., Peng, L., & John, L. K. (2025). <br>
+        <em>Twin-2K-500 dataset & digital-twin modeling.</em> Marketing Science. <br>
+        <a href="https://doi.org/10.1287/mksc.2025.0262" class="text-sky-700 hover:underline" target="_blank">https://doi.org/10.1287/mksc.2025.0262</a>
+      </p>
 
-  <p class="mb-2">
-    <a href="https://huggingface.co/datasets/LLM-Digital-Twin/Twin-2K-500" class="text-sky-600 hover:underline font-medium inline-flex items-center gap-1" target="_blank">
-      Access Original Dataset (Hugging Face)
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-3 h-3">
-        <path fill-rule="evenodd" d="M4.25 5.5a.75.75 0 00-.75.75v8.5c0 .414.336.75.75.75h8.5a.75.75 0 00.75-.75v-4a.75.75 0 011.5 0v4A2.25 2.25 0 0112.75 17h-8.5A2.25 2.25 0 012 14.75v-8.5A2.25 2.25 0 014.25 4h5a.75.75 0 010 1.5h-5z" clip-rule="evenodd" />
-        <path fill-rule="evenodd" d="M6.194 12.753a.75.75 0 001.06.053L16.5 4.44v2.81a.75.75 0 001.5 0v-4.5a.75.75 0 00-.75-.75h-4.5a.75.75 0 000 1.5h2.553l-9.056 8.194a.7
+      <p class="mb-2">
+        <a href="https://huggingface.co/datasets/LLM-Digital-Twin/Twin-2K-500" class="text-sky-600 hover:underline font-medium inline-flex items-center gap-1" target="_blank">
+          Access Original Dataset (Hugging Face)
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-3 h-3">
+            <path fill-rule="evenodd" d="M4.25 5.5a.75.75 0 00-.75.75v8.5c0 .414.336.75.75.75h8.5a.75.75 0 00.75-.75v-4a.75.75 0 011.5 0v4A2.25 2.25 0 0112.75 17h-8.5A2.25 2.25 0 012 14.75v-8.5A2.25 2.25 0 014.25 4h5a.75.75 0 010 1.5h-5z" clip-rule="evenodd" />
+            <path fill-rule="evenodd" d="M6.194 12.753a.75.75 0 001.06.053L16.5 4.44v2.81a.75.75 0 001.5 0v-4.5a.75.75 0 00-.75-.75h-4.5a.75.75 0 000 1.5h2.553l-9.056 8.194a.75.75 0 00-.053 1.06z" clip-rule="evenodd" />
+          </svg>
+        </a>
+      </p>
+
+      <p class="italic opacity-75">
+        This interface is for educational use. Personas are anonymized.
+      </p>
+    </footer>
+
   </div>
 
   <script>
+    // GLOBAL VARIABLES
     let personas = [];
     let currentPersona = null;
+
     const els = {
         personaOut: document.getElementById('personaOut'),
         promptOut: document.getElementById('promptOut'),
@@ -111,7 +137,7 @@
         copyBtn: document.getElementById('copyBtn')
     };
 
-    // LOAD DATA (Handles Split Files)
+    // 1. LOAD DATA
     async function loadPersonas(){
       try {
         els.countBadge.textContent = "Fetching data files...";
@@ -152,34 +178,67 @@
       }
     }
 
-    // LOGIC: Display
+    // 2. DISPLAY LOGIC
     function displayPersona(p) {
-        if (!p) { els.personaOut.textContent = "Persona not found."; return; }
+        if (!p) {
+            els.personaOut.textContent = "Persona not found.";
+            return;
+        }
         currentPersona = p;
         const pid = p.pid ?? 'Unknown';
+        // Fallback to whatever key holds the text
         const text = p.persona_summary ?? p.persona_text ?? p.summary ?? JSON.stringify(p);
+        
         els.personaOut.textContent = `[ID: ${pid}]\n\n${text}`;
         els.idInput.value = pid;
     }
 
-    // LOGIC: Buttons
+    // 3. BUTTON HANDLERS
     document.getElementById('randomBtn').onclick = () => {
-        if(!personas.length) return;
-        displayPersona(personas[Math.floor(Math.random() * personas.length)]);
+        if(personas.length === 0) return;
+        const randomIndex = Math.floor(Math.random() * personas.length);
+        displayPersona(personas[randomIndex]);
     };
 
     document.getElementById('getBtn').onclick = () => {
-        if(!personas.length) return;
-        const id = Number(els.idInput.value);
-        let found = personas.find(p => Number(p.pid) === id);
-        if (!found && id > 0 && id <= personas.length) found = personas[id - 1];
+        if(personas.length === 0) return;
+        const requestedId = Number(els.idInput.value);
+        
+        // Try to find by exact PID property first
+        let found = personas.find(p => Number(p.pid) === requestedId);
+        
+        // Fallback: If they typed "5", maybe they mean the 5th item in the list
+        if (!found && requestedId > 0 && requestedId <= personas.length) {
+            found = personas[requestedId - 1];
+        }
+        
         displayPersona(found);
     };
 
     document.getElementById('genBtn').onclick = () => {
-        if (!currentPersona) { alert("Select a Persona first."); return; }
+        if (!currentPersona) {
+            alert("Please select a Persona first.");
+            return;
+        }
+
         const personaText = currentPersona.persona_summary ?? currentPersona.persona_text ?? "No data";
-        const finalPrompt = `### SYSTEM INSTRUCTION\n${els.systemInstr.value.trim()}\n\n### PERSONA PROFILE\n${personaText.trim()}\n\n### SCENARIO\n${els.treatmentInstr.value.trim()}\n\n### TASK\n${els.outcomeInstr.value.trim()}\n\n### RESPONSE\n`;
+        
+        // Construct the prompt clearly for the LLM
+        const finalPrompt = 
+`### SYSTEM INSTRUCTION
+${els.systemInstr.value.trim()}
+
+### PERSONA PROFILE
+${personaText.trim()}
+
+### SCENARIO
+${els.treatmentInstr.value.trim()}
+
+### TASK / QUESTION
+${els.outcomeInstr.value.trim()}
+
+### RESPONSE
+`;
         els.promptOut.textContent = finalPrompt;
         els.promptLen.textContent = `${finalPrompt.length} chars`;
     };
@@ -192,13 +251,23 @@
     els.copyBtn.onclick = async () => {
         const text = els.promptOut.textContent;
         if (!text || text.startsWith("(Click")) return;
+
         try {
             await navigator.clipboard.writeText(text);
+            const originalText = els.copyBtn.textContent;
             els.copyBtn.textContent = "Copied!";
-            setTimeout(() => els.copyBtn.textContent = "Copy", 2000);
-        } catch (err) { alert("Copy failed."); }
+            els.copyBtn.className = "px-6 py-3 rounded border border-emerald-500 bg-emerald-50 text-emerald-700 font-bold shadow-sm";
+            
+            setTimeout(() => {
+                els.copyBtn.textContent = "Copy";
+                els.copyBtn.className = "px-6 py-3 rounded border border-gray-300 bg-white hover:bg-gray-50 font-medium shadow-sm";
+            }, 2000);
+        } catch (err) {
+            alert("Failed to copy. Please select the text and copy manually.");
+        }
     };
 
+    // Initialize
     loadPersonas();
   </script>
 </body>

@@ -7,12 +7,14 @@
 
   <script src="https://cdn.tailwindcss.com"></script>
   <style> 
-    /* Ensures text wraps inside the boxes so it doesn't scroll horizontally */
     pre { white-space: pre-wrap; word-break: break-word; } 
+    /* Smooth fade for updates */
+    .fade-in { animation: fadeIn 0.3s ease-in-out; }
+    @keyframes fadeIn { from { opacity: 0.5; } to { opacity: 1; } }
   </style>
 </head>
 <body class="bg-gray-50 text-gray-900 font-sans antialiased">
-  <div class="max-w-3xl mx-auto p-4 sm:p-6">
+  <div class="max-w-4xl mx-auto p-4 sm:p-6">
 
     <header class="mb-6 border-b pb-4">
       <h1 class="text-2xl font-bold text-slate-800">Twin-2K-500 — Persona Browser</h1>
@@ -23,90 +25,104 @@
 
     <section class="mb-6 bg-white p-5 rounded-lg border shadow-sm">
       <p class="text-sm text-gray-700 leading-relaxed mb-3">
-        This tool provides an interface for the <strong>Twin-2K-500</strong> dataset, developed by 
-        <strong>Toubia, Gui, Peng, Merlau, Li and Chen (2025)</strong>.
+        This tool provides an interface for the <strong>Twin-2K-500</strong> dataset (Toubia et al., 2025).
       </p>
-      
       <div class="bg-slate-50 p-3 rounded border border-slate-200">
         <h3 class="text-xs font-bold uppercase text-slate-500 mb-2 tracking-wide">Experimental Workflow</h3>
         <ol class="text-sm text-gray-700 space-y-1.5 list-decimal list-inside">
-            <li><strong>Select Subject:</strong> Load a digital twin profile using "Random Persona" or a specific <strong>ID number</strong>.</li>
-            <li><strong>Design Experiment:</strong> Customize the <strong>Scenario</strong> (treatment scenario or control scenario) and <strong>Question</strong> (outcome) below to test your hypothesis.</li>
-            <li><strong>Run Simulation:</strong> Click "Generate Prompt," copy the text, and paste it into your <strong>LLM of choice</strong> to observe the response.</li>
+            <li><strong>Setup:</strong> Define your Scenario and Question in the boxes below.</li>
+            <li><strong>Batch Process:</strong> Use the <strong>Command Bar</strong> at the bottom to cycle through personas and copy prompts without scrolling.</li>
+            <li><strong>Run:</strong> Paste into your LLM (ChatGPT, Claude, etc.).</li>
         </ol>
       </div>
     </section>
 
-    <section class="space-y-4 mb-6">
-      <div id="countBadge" class="text-xs font-mono text-gray-500 text-right">Connecting to database...</div>
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
       
-      <div class="flex flex-col sm:flex-row gap-2">
-        <button id="randomBtn" class="flex-1 px-4 py-2 rounded bg-sky-700 text-white font-medium hover:bg-sky-800 transition-colors shadow-sm">
-          Random Persona
-        </button>
-        <div class="flex gap-2">
-            <input id="idInput" type="number" placeholder="ID #" class="w-24 px-3 py-2 border rounded text-center" />
-            <button id="getBtn" class="px-4 py-2 rounded border border-gray-300 bg-white hover:bg-gray-50 font-medium shadow-sm">
-            Get
-            </button>
+      <section class="space-y-4">
+        <div class="flex items-center justify-between">
+             <h2 class="text-sm font-bold text-slate-700 uppercase tracking-wide">1. Subject Selection</h2>
+             <div id="countBadge" class="text-xs font-mono text-gray-500">Connecting...</div>
         </div>
-      </div>
+        
+        <div class="flex gap-2">
+            <button id="topRandomBtn" class="flex-1 px-3 py-2 rounded bg-sky-100 text-sky-800 font-medium hover:bg-sky-200 transition-colors border border-sky-200 text-sm">
+              🎲 Random Persona
+            </button>
+            <div class="flex gap-1">
+                <input id="idInput" type="number" placeholder="ID #" class="w-20 px-2 py-2 border rounded text-center text-sm" />
+                <button id="getBtn" class="px-3 py-2 rounded border border-gray-300 bg-white hover:bg-gray-50 text-sm font-medium">Get</button>
+            </div>
+        </div>
 
-      <div>
-        <label class="block text-xs uppercase font-bold text-gray-500 mb-1">Current Persona</label>
-        <pre id="personaOut" class="p-4 bg-white border border-gray-200 rounded text-sm text-gray-800 min-h-[120px] shadow-inner">Waiting for selection...</pre>
-      </div>
-    </section>
+        <div class="relative group">
+            <pre id="personaOut" class="p-4 bg-white border border-gray-200 rounded text-xs text-gray-600 min-h-[160px] max-h-[300px] overflow-y-auto shadow-inner leading-relaxed">Waiting for selection...</pre>
+            <div class="absolute top-2 right-2 text-[10px] text-gray-300 font-mono uppercase">Persona Profile</div>
+        </div>
+      </section>
+
+      <section class="space-y-4">
+         <h2 class="text-sm font-bold text-slate-700 uppercase tracking-wide">2. Experiment Design</h2>
+         
+         <div>
+            <label class="block text-xs font-medium text-gray-500 mb-1">System Instruction (Constant)</label>
+            <textarea id="systemInstr" class="w-full p-3 border rounded shadow-sm text-sm focus:ring-2 focus:ring-sky-500 focus:outline-none bg-slate-50" rows="2">You are an AI assistant. Answer the upcoming question exactly as if you are the person described in the Persona Profile. Stay consistent with past responses.</textarea>
+         </div>
+
+         <div>
+            <label class="block text-xs font-medium text-gray-500 mb-1">Scenario / Treatment</label>
+            <textarea id="treatmentInstr" class="w-full p-3 border rounded shadow-sm text-sm focus:ring-2 focus:ring-sky-500 focus:outline-none" rows="3">Imagine you are evaluating your monthly expenses. You are offered a special promotion for Netflix: Ad-Free streaming for $9.99 per month, guaranteed for 12 months.</textarea>
+         </div>
+
+         <div>
+            <label class="block text-xs font-medium text-gray-500 mb-1">Outcome / Question</label>
+            <textarea id="outcomeInstr" class="w-full p-3 border rounded shadow-sm text-sm focus:ring-2 focus:ring-sky-500 focus:outline-none" rows="2">Given your financial situation and preferences, would you accept this offer? Answer strictly Yes or No.</textarea>
+         </div>
+      </section>
+    </div>
 
     <hr class="my-8 border-gray-200">
 
-    <section class="space-y-4 mb-6">
-      <div>
-        <label class="block text-sm font-medium text-gray-700 mb-1">System Instruction</label>
-        <textarea id="systemInstr" class="w-full p-3 border rounded shadow-sm text-sm focus:ring-2 focus:ring-sky-500 focus:outline-none" rows="3">You are an AI assistant. Answer the upcoming question exactly as if you are the person described in the Persona Profile. Stay consistent with past responses.</textarea>
-      </div>
+    <section class="mb-12">
+        <h2 class="text-sm font-bold text-slate-700 uppercase tracking-wide mb-3">3. Production Command Bar</h2>
+        
+        <div class="bg-slate-800 p-4 rounded-t-lg shadow-lg flex flex-col sm:flex-row gap-3 items-center">
+            
+            <button id="bottomRandomBtn" class="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-3 rounded bg-slate-700 text-white font-medium hover:bg-slate-600 border border-slate-600 transition-all hover:shadow-md group">
+                <span>🎲</span> 
+                <span class="text-sm">New Random Persona</span>
+            </button>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Scenario / Treatment</label>
-            <textarea id="treatmentInstr" class="w-full p-3 border rounded shadow-sm text-sm focus:ring-2 focus:ring-sky-500 focus:outline-none" rows="3">Imagine you are evaluating your monthly expenses. You are offered a special promotion for Netflix: Ad-Free streaming for $9.99 per month, guaranteed for 12 months.</textarea>
+            <div class="hidden sm:block text-slate-500">→</div>
+
+            <button id="genBtn" class="w-full sm:flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded bg-emerald-600 text-white font-bold hover:bg-emerald-500 shadow-md transition-all hover:scale-[1.02]">
+                <span>⚡</span>
+                <span>Generate Prompt</span>
+            </button>
+
+            <div class="hidden sm:block text-slate-500">→</div>
+
+            <button id="copyBtn" class="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 rounded bg-white text-slate-800 font-bold hover:bg-gray-100 shadow-md transition-all">
+                <span>📋</span>
+                <span>Copy</span>
+            </button>
+
         </div>
-        <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Outcome / Question</label>
-            <textarea id="outcomeInstr" class="w-full p-3 border rounded shadow-sm text-sm focus:ring-2 focus:ring-sky-500 focus:outline-none" rows="3">Given your financial situation and preferences, would you accept this offer? Answer strictly Yes or No.</textarea>
-        </div>
-      </div>
-    </section>
 
-    <section class="space-y-3 mb-8">
-      <div class="flex gap-2">
-        <button id="genBtn" class="flex-1 px-4 py-3 rounded bg-emerald-600 text-white font-bold hover:bg-emerald-700 shadow-md transition-all">
-            Generate Prompt
-        </button>
-        <button id="copyBtn" class="px-6 py-3 rounded border border-gray-300 bg-white hover:bg-gray-50 font-medium shadow-sm">
-            Copy
-        </button>
-      </div>
-
-      <div>
-        <label class="block text-xs uppercase font-bold text-gray-500 mb-1">Final Prompt Preview</label>
         <div class="relative">
-            <pre id="promptOut" class="p-4 bg-slate-50 border border-gray-300 rounded text-sm text-slate-800 min-h-[150px] shadow-inner">(Click 'Generate Prompt' to create the text here)</pre>
+            <pre id="promptOut" class="p-4 bg-slate-100 border-x border-b border-slate-300 rounded-b-lg text-sm text-slate-800 min-h-[150px] shadow-inner">(Click 'Generate Prompt' to create the text here)</pre>
             <div id="promptLen" class="absolute top-2 right-2 text-xs text-gray-400">0 chars</div>
         </div>
-      </div>
-      <button id="clearBtn" class="text-xs text-gray-400 hover:text-red-500 underline">Clear Output</button>
     </section>
 
-    <footer class="text-xs text-center text-gray-500 border-t pt-6 pb-8 mt-8">
+
+    <footer class="text-xs text-center text-gray-500 pt-6 pb-12">
       <div class="font-semibold text-gray-700 mb-2">Primary Source Attribution</div>
-      
       <p class="mb-3 leading-relaxed">
         Toubia, O., Gui, L., Peng, L., & John, L. K. (2025). <br>
         <em>Twin-2K-500 dataset & digital-twin modeling.</em> Marketing Science. <br>
         <a href="https://doi.org/10.1287/mksc.2025.0262" class="text-sky-700 hover:underline" target="_blank">https://doi.org/10.1287/mksc.2025.0262</a>
       </p>
-
       <p class="mb-2">
         <a href="https://huggingface.co/datasets/LLM-Digital-Twin/Twin-2K-500" class="text-sky-600 hover:underline font-medium inline-flex items-center gap-1" target="_blank">
           Access Original Dataset (Hugging Face)
@@ -116,19 +132,15 @@
           </svg>
         </a>
       </p>
-
-      <p class="italic opacity-75">
-        This interface is for educational use. Personas are anonymized.
-      </p>
+      <p class="italic opacity-75">This interface is for educational use. Personas are anonymized.</p>
     </footer>
 
   </div>
 
   <script>
-    // GLOBAL VARIABLES
+    // VARIABLES
     let personas = [];
     let currentPersona = null;
-
     const els = {
         personaOut: document.getElementById('personaOut'),
         promptOut: document.getElementById('promptOut'),
@@ -141,137 +153,113 @@
         copyBtn: document.getElementById('copyBtn')
     };
 
-    // 1. LOAD DATA
+    // LOAD DATA
     async function loadPersonas(){
       try {
-        els.countBadge.textContent = "Fetching data files...";
-        
-        // Fetch both parts in parallel
+        els.countBadge.textContent = "Loading...";
         const [r1, r2] = await Promise.allSettled([
             fetch('personas_part1.json', {cache: "no-store"}),
             fetch('personas_part2.json', {cache: "no-store"})
         ]);
 
         let p1 = [], p2 = [];
-
-        // Process Part 1
         if(r1.status === 'fulfilled' && r1.value.ok) {
-            p1 = await r1.value.json();
-            if(p1.personas) p1 = p1.personas; // Handle nested structure if present
+            let j = await r1.value.json();
+            p1 = j.personas || j;
         }
-
-        // Process Part 2
         if(r2.status === 'fulfilled' && r2.value.ok) {
-            p2 = await r2.value.json();
-            if(p2.personas) p2 = p2.personas;
+            let j = await r2.value.json();
+            p2 = j.personas || j;
         }
 
         personas = [...p1, ...p2];
+        if (personas.length === 0) throw new Error("No data loaded.");
 
-        if (personas.length === 0) throw new Error("Could not load personas_part1.json or personas_part2.json");
-
-        els.countBadge.textContent = `Database Active: ${personas.length} records loaded.`;
-        els.countBadge.className = "text-xs font-mono text-emerald-600 text-right font-bold";
-        els.personaOut.textContent = 'Ready. Click "Random Persona" to begin.';
+        els.countBadge.textContent = `${personas.length} Available`;
+        els.countBadge.className = "text-xs font-mono text-emerald-600 font-bold";
+        els.personaOut.textContent = 'Ready. Select a persona to begin.';
 
       } catch (e) {
         console.error(e);
-        els.countBadge.textContent = "Database Error";
-        els.countBadge.className = "text-xs font-mono text-red-600 text-right font-bold";
-        els.personaOut.innerHTML = `<span class="text-red-600 font-bold">Error:</span> ${e.message}<br>Ensure 'personas_part1.json' and 'personas_part2.json' are uploaded.`;
+        els.countBadge.textContent = "Error";
+        els.countBadge.className = "text-xs font-mono text-red-600 font-bold";
+        els.personaOut.innerHTML = `<span class="text-red-600">Error: ${e.message}</span>`;
       }
     }
 
-    // 2. DISPLAY LOGIC
+    // DISPLAY LOGIC
     function displayPersona(p) {
-        if (!p) {
-            els.personaOut.textContent = "Persona not found.";
-            return;
-        }
+        if (!p) return;
         currentPersona = p;
         const pid = p.pid ?? 'Unknown';
-        // Fallback to whatever key holds the text
         const text = p.persona_summary ?? p.persona_text ?? p.summary ?? JSON.stringify(p);
         
+        // Visual feedback
         els.personaOut.textContent = `[ID: ${pid}]\n\n${text}`;
+        els.personaOut.classList.remove('fade-in');
+        void els.personaOut.offsetWidth; // trigger reflow
+        els.personaOut.classList.add('fade-in');
+        
         els.idInput.value = pid;
+        
+        // Clear the prompt to indicate a new one is needed
+        els.promptOut.textContent = "(Persona changed. Click 'Generate Prompt' to update.)";
+        els.promptOut.classList.add("text-gray-400");
+        els.promptOut.classList.remove("text-slate-800");
     }
 
-    // 3. BUTTON HANDLERS
-    document.getElementById('randomBtn').onclick = () => {
-        if(personas.length === 0) return;
-        const randomIndex = Math.floor(Math.random() * personas.length);
-        displayPersona(personas[randomIndex]);
+    // ACTIONS
+    const pickRandom = () => {
+        if(!personas.length) return;
+        displayPersona(personas[Math.floor(Math.random() * personas.length)]);
     };
 
+    // Link both random buttons to the same function
+    document.getElementById('topRandomBtn').onclick = pickRandom;
+    document.getElementById('bottomRandomBtn').onclick = pickRandom;
+
     document.getElementById('getBtn').onclick = () => {
-        if(personas.length === 0) return;
-        const requestedId = Number(els.idInput.value);
-        
-        // Try to find by exact PID property first
-        let found = personas.find(p => Number(p.pid) === requestedId);
-        
-        // Fallback: If they typed "5", maybe they mean the 5th item in the list
-        if (!found && requestedId > 0 && requestedId <= personas.length) {
-            found = personas[requestedId - 1];
-        }
-        
+        if(!personas.length) return;
+        const id = Number(els.idInput.value);
+        let found = personas.find(p => Number(p.pid) === id);
+        if (!found && id > 0 && id <= personas.length) found = personas[id - 1];
         displayPersona(found);
     };
 
     document.getElementById('genBtn').onclick = () => {
-        if (!currentPersona) {
-            alert("Please select a Persona first.");
-            return;
-        }
-
-        const personaText = currentPersona.persona_summary ?? currentPersona.persona_text ?? "No data";
+        if (!currentPersona) { alert("Please select a Persona first."); return; }
         
-        // Construct the prompt clearly for the LLM
-        const finalPrompt = 
-`### SYSTEM INSTRUCTION
-${els.systemInstr.value.trim()}
-
-### PERSONA PROFILE
-${personaText.trim()}
-
-### SCENARIO
-${els.treatmentInstr.value.trim()}
-
-### TASK / QUESTION
-${els.outcomeInstr.value.trim()}
-
-### RESPONSE
-`;
+        const personaText = currentPersona.persona_summary ?? currentPersona.persona_text ?? "No data";
+        const finalPrompt = `### SYSTEM INSTRUCTION\n${els.systemInstr.value.trim()}\n\n### PERSONA PROFILE\n${personaText.trim()}\n\n### SCENARIO\n${els.treatmentInstr.value.trim()}\n\n### TASK\n${els.outcomeInstr.value.trim()}\n\n### RESPONSE\n`;
+        
         els.promptOut.textContent = finalPrompt;
+        els.promptOut.classList.remove("text-gray-400");
+        els.promptOut.classList.add("text-slate-800");
         els.promptLen.textContent = `${finalPrompt.length} chars`;
-    };
-
-    document.getElementById('clearBtn').onclick = () => {
-        els.promptOut.textContent = "(Click 'Generate Prompt' to create the text here)";
-        els.promptLen.textContent = "0 chars";
+        
+        // Visual pop effect
+        els.promptOut.classList.remove('fade-in');
+        void els.promptOut.offsetWidth;
+        els.promptOut.classList.add('fade-in');
     };
 
     els.copyBtn.onclick = async () => {
         const text = els.promptOut.textContent;
-        if (!text || text.startsWith("(Click")) return;
-
+        if (!text || text.startsWith("(") || text.startsWith("(Persona")) return;
         try {
             await navigator.clipboard.writeText(text);
-            const originalText = els.copyBtn.textContent;
-            els.copyBtn.textContent = "Copied!";
-            els.copyBtn.className = "px-6 py-3 rounded border border-emerald-500 bg-emerald-50 text-emerald-700 font-bold shadow-sm";
+            const originalText = els.copyBtn.innerHTML;
+            
+            els.copyBtn.innerHTML = "<span>✅</span><span>Copied!</span>";
+            els.copyBtn.classList.add("bg-emerald-100", "text-emerald-800");
             
             setTimeout(() => {
-                els.copyBtn.textContent = "Copy";
-                els.copyBtn.className = "px-6 py-3 rounded border border-gray-300 bg-white hover:bg-gray-50 font-medium shadow-sm";
-            }, 2000);
-        } catch (err) {
-            alert("Failed to copy. Please select the text and copy manually.");
-        }
+                els.copyBtn.innerHTML = originalText;
+                els.copyBtn.classList.remove("bg-emerald-100", "text-emerald-800");
+            }, 1500);
+        } catch (err) { alert("Copy failed."); }
     };
 
-    // Initialize
     loadPersonas();
   </script>
 </body>

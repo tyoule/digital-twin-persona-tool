@@ -21,16 +21,20 @@
       </p>
     </header>
 
-    <section class="mb-6 bg-white p-4 rounded-lg border shadow-sm">
-      <p class="text-sm text-gray-700 leading-relaxed">
+    <section class="mb-6 bg-white p-5 rounded-lg border shadow-sm">
+      <p class="text-sm text-gray-700 leading-relaxed mb-3">
         This tool provides an interface for the <strong>Twin-2K-500</strong> dataset, developed by 
         <strong>Toubia, Gui, Peng, and John (2025)</strong>.
-        <br><br>
-        <strong>Instructions:</strong>
-        1. Click "Random Persona" or enter a specific ID.
-        2. Modify the scenario or question below.
-        3. Click "Generate Prompt" and then "Copy" to paste it into ChatGPT/Claude/Gemini.
       </p>
+      
+      <div class="bg-slate-50 p-3 rounded border border-slate-200">
+        <h3 class="text-xs font-bold uppercase text-slate-500 mb-2 tracking-wide">Experimental Workflow</h3>
+        <ol class="text-sm text-gray-700 space-y-1.5 list-decimal list-inside">
+            <li><strong>Select Subject:</strong> Load a digital twin profile using "Random Persona" or a specific <strong>ID number</strong>.</li>
+            <li><strong>Design Experiment:</strong> Customize the <strong>Scenario</strong> (treatment) and <strong>Question</strong> (outcome) below to test your hypothesis.</li>
+            <li><strong>Run Simulation:</strong> Click "Generate Prompt," copy the text, and paste it into your <strong>LLM of choice</strong> (ChatGPT, Claude, DeepSeek, Grok, etc.) to observe the response.</li>
+        </ol>
+      </div>
     </section>
 
     <section class="space-y-4 mb-6">
@@ -41,7 +45,7 @@
           Random Persona
         </button>
         <div class="flex gap-2">
-            <input id="idInput" type="number" placeholder="PID #" class="w-24 px-3 py-2 border rounded text-center" />
+            <input id="idInput" type="number" placeholder="ID #" class="w-24 px-3 py-2 border rounded text-center" />
             <button id="getBtn" class="px-4 py-2 rounded border border-gray-300 bg-white hover:bg-gray-50 font-medium shadow-sm">
             Get
             </button>
